@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../models/models.dart';
-import '../widgets/shared_widgets.dart';
-
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
 
@@ -11,9 +9,6 @@ class ReportsScreen extends StatefulWidget {
 }
 
 class _ReportsScreenState extends State<ReportsScreen> {
-  int _tabIndex = 0;
-  final _tabs = ['Mileage', 'Fuel', 'Alerts', 'Trips'];
-
   @override
   Widget build(BuildContext context) {
     final topPad = MediaQuery.of(context).padding.top;
@@ -24,35 +19,10 @@ class _ReportsScreenState extends State<ReportsScreen> {
         children: [
           SizedBox(height: topPad),
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
             child: Row(
               children: [
-                Expanded(
-                    child: Text('Reports', style: AppText.syne(size: 18))),
-                // Date range picker
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: AppColors.navy2,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.calendar_month_rounded,
-                          size: 16, color: AppColors.muted),
-                      const SizedBox(width: 6),
-                      Text('May 8 – 15',
-                          style: AppText.dm(size: 12)),
-                      const SizedBox(width: 4),
-                      const Icon(Icons.expand_more_rounded,
-                          size: 16, color: AppColors.muted),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
+                Expanded(child: Text('Reports', style: AppText.syne(size: 18))),
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -60,114 +30,53 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: AppColors.border),
                   ),
-                  child: const Icon(Icons.download_rounded,
-                      size: 18, color: AppColors.teal),
+                  child: const Icon(Icons.upload_rounded, size: 20, color: AppColors.muted),
                 ),
               ],
             ),
           ),
-
-          // Tabs
-          SizedBox(
-            height: 36,
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              scrollDirection: Axis.horizontal,
-              itemCount: _tabs.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 6),
-              itemBuilder: (context, i) {
-                final active = i == _tabIndex;
-                return GestureDetector(
-                  onTap: () => setState(() => _tabIndex = i),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: active
-                          ? AppColors.teal.withOpacity(0.15)
-                          : AppColors.navy3,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                          color: active
-                              ? AppColors.teal
-                              : AppColors.border),
-                    ),
-                    child: Text(_tabs[i],
-                        style: AppText.dm(
-                          size: 12,
-                          color: active
-                              ? AppColors.teal
-                              : AppColors.muted,
-                          weight: active
-                              ? FontWeight.w600
-                              : FontWeight.w400,
-                        )),
-                  ),
-                );
-              },
-            ),
-          ),
-          const SizedBox(height: 10),
-
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(14, 0, 14, 40),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Summary cards
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _SummaryCard(
-                          label: 'Total Distance',
-                          value: '1,847',
-                          unit: 'km this week',
-                          trend: '+12%',
-                          trendUp: true,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: _SummaryCard(
-                          label: 'Active Hours',
-                          value: '38.5',
-                          unit: 'hrs this week',
-                          trend: '+5%',
-                          trendUp: true,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _SummaryCard(
-                          label: 'Avg Speed',
-                          value: '56',
-                          unit: 'km/h',
-                          trend: '-2%',
-                          trendUp: false,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: _SummaryCard(
-                          label: 'Total Trips',
-                          value: '24',
-                          unit: 'completed',
-                          trend: '+8%',
-                          trendUp: true,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Weekly mileage chart
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: AppColors.navy2,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.date_range_rounded, size: 22, color: AppColors.blue),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Date range', style: AppText.dm(size: 11, color: AppColors.muted)),
+                              const SizedBox(height: 3),
+                              Text('1 May — 15 May 2026', style: AppText.dm(size: 13, weight: FontWeight.w600)),
+                            ],
+                          ),
+                        ),
+                        Text('Edit \u203A', style: AppText.dm(size: 13, color: AppColors.teal, weight: FontWeight.w600)),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Row(children: [
+                    Expanded(child: _KpiCard(value: '3,241', unit: 'km', color: AppColors.teal)),
+                    const SizedBox(width: 6),
+                    Expanded(child: _KpiCard(value: '47', unit: 'trips')),
+                    const SizedBox(width: 6),
+                    Expanded(child: _KpiCard(value: '6', unit: 'alerts', color: AppColors.amber)),
+                  ]),
+                  const SizedBox(height: 10),
+                  Container(
+                    padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
                       color: AppColors.navy2,
                       borderRadius: BorderRadius.circular(14),
@@ -176,43 +85,75 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Weekly Mileage',
-                                style: AppText.dm(
-                                    size: 13,
-                                    weight: FontWeight.w600)),
-                            Text('+12% ↑',
-                                style: AppText.dm(
-                                    size: 12,
-                                    color: AppColors.teal,
-                                    weight: FontWeight.w600)),
-                          ],
-                        ),
-                        const SizedBox(height: 14),
-                        _BarChart(
-                          data: SampleData.weeklyMileage,
-                          labels: SampleData.weekDays,
-                          highlightIndex: 3,
+                        Text('Daily Mileage', style: AppText.dm(size: 13, weight: FontWeight.w600)),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          height: 60,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              for (int i = 0; i < SampleData.weeklyMileage.length; i++) ...[
+                                Expanded(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 3),
+                                        child: Container(
+                                          height: 48 * (SampleData.weeklyMileage[i] / 210),
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment.bottomCenter, end: Alignment.topCenter,
+                                              colors: i == 3
+                                                  ? [AppColors.amber, AppColors.amber.withOpacity(0.4)]
+                                                  : i == 9
+                                                      ? [AppColors.red, AppColors.red.withOpacity(0.4)]
+                                                      : [AppColors.teal, AppColors.teal.withOpacity(0.4)],
+                                            ),
+                                            borderRadius: BorderRadius.circular(3),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(SampleData.weekDays[i], style: AppText.mono(size: 9, color: AppColors.muted)),
+                                    ],
+                                  ),
+                                ),
+                                if (i == 6) const SizedBox(width: 0),
+                              ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 14),
-
-                  // Per-vehicle breakdown
-                  SectionHeader(label: 'Vehicle Breakdown'),
-                  ...SampleData.vehicles.map(
-                    (v) => _VehicleReportRow(vehicle: v),
+                  Text('EXPORT REPORTS'.toUpperCase(),
+                      style: AppText.dm(size: 11, color: AppColors.muted, weight: FontWeight.w600)),
+                  const SizedBox(height: 8),
+                  _ReportRow(
+                    icon: Icons.description_rounded,
+                    iconColor: AppColors.teal,
+                    title: 'Fleet Summary',
+                    subtitle: 'All vehicles · Mileage, trips, alerts',
+                    badge: 'PDF',
+                    badgeColor: AppColors.teal,
                   ),
-                  const SizedBox(height: 14),
-
-                  // Recent activity
-                  SectionHeader(label: 'Recent Trips'),
-                  ...SampleData.trips.map(
-                    (t) => _TripReportRow(trip: t),
+                  _ReportRow(
+                    icon: Icons.speed_rounded,
+                    iconColor: AppColors.blue,
+                    title: 'Speed Violations',
+                    subtitle: 'Speed events, times, locations',
+                    badge: 'CSV',
+                    badgeColor: AppColors.blue,
+                  ),
+                  _ReportRow(
+                    icon: Icons.notifications_active_rounded,
+                    iconColor: AppColors.red,
+                    title: 'Tamper Log',
+                    subtitle: 'All tamper events with coordinates',
+                    badge: 'PDF',
+                    badgeColor: AppColors.red,
                   ),
                 ],
               ),
@@ -224,141 +165,14 @@ class _ReportsScreenState extends State<ReportsScreen> {
   }
 }
 
-class _SummaryCard extends StatelessWidget {
-  final String label;
-  final String value;
-  final String unit;
-  final String trend;
-  final bool trendUp;
-
-  const _SummaryCard({
-    required this.label,
-    required this.value,
-    required this.unit,
-    required this.trend,
-    required this.trendUp,
-  });
-
+class _KpiCard extends StatelessWidget {
+  final String value, unit;
+  final Color? color;
+  const _KpiCard({required this.value, required this.unit, this.color});
   @override
   Widget build(BuildContext context) {
-    final trendColor = trendUp ? AppColors.teal : AppColors.red;
-
     return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.navy2,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label,
-              style: AppText.dm(size: 11, color: AppColors.muted)),
-          const SizedBox(height: 6),
-          Text(value,
-              style: AppText.syne(
-                  size: 24, weight: FontWeight.w800)),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(unit,
-                  style: AppText.dm(size: 11, color: AppColors.muted)),
-              Text(trend,
-                  style: AppText.dm(
-                      size: 11,
-                      color: trendColor,
-                      weight: FontWeight.w600)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BarChart extends StatelessWidget {
-  final List<double> data;
-  final List<String> labels;
-  final int highlightIndex;
-
-  const _BarChart({
-    required this.data,
-    required this.labels,
-    required this.highlightIndex,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final maxVal = data.reduce((a, b) => a > b ? a : b);
-
-    return Column(
-      children: [
-        SizedBox(
-          height: 80,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: List.generate(data.length, (i) {
-              final heightFraction = data[i] / maxVal;
-              final isHighlight = i == highlightIndex;
-              return Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 3),
-                  child: Container(
-                    height: 80 * heightFraction,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        colors: isHighlight
-                            ? [AppColors.amber, AppColors.amber.withOpacity(0.6)]
-                            : [
-                                AppColors.teal.withOpacity(0.6),
-                                AppColors.blue.withOpacity(0.4)
-                              ],
-                      ),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                ),
-              );
-            }),
-          ),
-        ),
-        const SizedBox(height: 6),
-        Row(
-          children: List.generate(labels.length, (i) {
-            final isHighlight = i == highlightIndex;
-            return Expanded(
-              child: Text(
-                labels[i],
-                textAlign: TextAlign.center,
-                style: AppText.dm(
-                  size: 10,
-                  color: isHighlight ? AppColors.amber : AppColors.muted,
-                  weight: isHighlight ? FontWeight.w700 : FontWeight.w400,
-                ),
-              ),
-            );
-          }),
-        ),
-      ],
-    );
-  }
-}
-
-class _VehicleReportRow extends StatelessWidget {
-  final Vehicle vehicle;
-
-  const _VehicleReportRow({required this.vehicle});
-
-  @override
-  Widget build(BuildContext context) {
-    final pct = (vehicle.mileage / 50000).clamp(0.0, 1.0);
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppColors.navy2,
         borderRadius: BorderRadius.circular(14),
@@ -366,47 +180,21 @@ class _VehicleReportRow extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Row(
-            children: [
-              Icon(vehicle.icon, size: 18, color: AppColors.muted),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(vehicle.name,
-                    style: AppText.dm(size: 13, weight: FontWeight.w600)),
-              ),
-              Text('${vehicle.mileage ~/ 1000}k km',
-                  style: AppText.syne(size: 13, color: AppColors.teal)),
-            ],
-          ),
-          const SizedBox(height: 8),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: pct,
-              backgroundColor: AppColors.navy3,
-              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.teal),
-              minHeight: 4,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(vehicle.plate, style: AppText.mono(size: 10)),
-              Text('${(pct * 100).toInt()}% of target',
-                  style: AppText.dm(size: 10, color: AppColors.muted)),
-            ],
-          ),
+          Text(value, style: AppText.syne(size: 17, color: color ?? AppColors.text, weight: FontWeight.w800)),
+          Text(unit, style: AppText.dm(size: 11, color: AppColors.muted)),
         ],
       ),
     );
   }
 }
 
-class _TripReportRow extends StatelessWidget {
-  final TripRecord trip;
+class _ReportRow extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String title, subtitle, badge;
+  final Color badgeColor;
 
-  const _TripReportRow({required this.trip});
+  const _ReportRow({required this.icon, required this.iconColor, required this.title, required this.subtitle, required this.badge, required this.badgeColor});
 
   @override
   Widget build(BuildContext context) {
@@ -421,30 +209,21 @@ class _TripReportRow extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 36, height: 36,
-            decoration: BoxDecoration(
-              color: AppColors.teal.withOpacity(0.10),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(Icons.route_rounded,
-                size: 18, color: AppColors.teal),
+            width: 40, height: 40,
+            decoration: BoxDecoration(color: iconColor.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+            child: Icon(icon, size: 20, color: iconColor),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('${trip.distanceKm.toInt()} km · ${trip.durationHrs.floor()}h ${((trip.durationHrs % 1) * 60).toInt()}m',
-                    style: AppText.dm(size: 13, weight: FontWeight.w600)),
-                Text('${trip.origin} → ${trip.destination}',
-                    style: AppText.dm(size: 11, color: AppColors.muted),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis),
+                Text(title, style: AppText.dm(size: 13, weight: FontWeight.w600)),
+                Text(subtitle, style: AppText.dm(size: 11, color: AppColors.muted)),
               ],
             ),
           ),
-          Text('${trip.startTime}',
-              style: AppText.mono(size: 11)),
+          Text(badge, style: AppText.mono(size: 12, color: badgeColor, weight: FontWeight.w700)),
         ],
       ),
     );

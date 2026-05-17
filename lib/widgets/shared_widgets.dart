@@ -586,6 +586,25 @@ class _VehicleDot extends StatelessWidget {
   }
 }
 
+class GridPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = AppColors.blue.withOpacity(0.05)
+      ..strokeWidth = 1;
+
+    for (double x = 0; x < size.width; x += 22) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
+    for (double y = 0; y < size.height; y += 22) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_) => false;
+}
+
 class _MapGridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -656,14 +675,15 @@ class PrimaryButton extends StatelessWidget {
 // ─── SEARCH INPUT ───────────────────────────────────────────────────
 class SearchInput extends StatelessWidget {
   final String hint;
+  final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
 
-  const SearchInput({super.key, required this.hint, this.onChanged});
+  const SearchInput({super.key, required this.hint, this.controller, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
         color: AppColors.navy2,
         borderRadius: BorderRadius.circular(12),
@@ -673,7 +693,17 @@ class SearchInput extends StatelessWidget {
         children: [
           const Icon(Icons.search_rounded, color: AppColors.muted, size: 18),
           const SizedBox(width: 8),
-          Text(hint, style: AppText.dm(size: 13, color: AppColors.muted)),
+          Expanded(
+            child: TextField(
+              controller: controller,
+              onChanged: onChanged,
+              style: AppText.dm(size: 13, color: AppColors.text),
+              decoration: InputDecoration.collapsed(
+                hintText: hint,
+                hintStyle: AppText.dm(size: 13, color: AppColors.muted),
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -54,6 +54,14 @@ static void my_application_activate(GApplication* application) {
 
   gtk_window_set_default_size(window, 1280, 720);
 
+  // Set window icon from bundled data directory.
+  g_autoptr(GError) icon_error = nullptr;
+  GdkPixbuf* icon_pixbuf = gdk_pixbuf_new_from_file("data/icon.png", &icon_error);
+  if (icon_pixbuf != nullptr) {
+    gtk_window_set_icon(window, GDK_PIXBUF(icon_pixbuf));
+    g_object_unref(icon_pixbuf);
+  }
+
   g_autoptr(FlDartProject) project = fl_dart_project_new();
   fl_dart_project_set_dart_entrypoint_arguments(
       project, self->dart_entrypoint_arguments);
