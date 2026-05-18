@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 import '../models/models.dart';
+import '../services/api_service.dart';
+import '../theme/app_theme.dart';
 import 'vehicle_detail_screen.dart';
 
 class AlertsScreen extends StatefulWidget {
@@ -11,13 +12,38 @@ class AlertsScreen extends StatefulWidget {
 }
 
 class _AlertsScreenState extends State<AlertsScreen> {
+  final _api = ApiService();
   int _filterIndex = 0;
-  late List<AlertItem> _alerts;
+  List<AlertItem> _alerts = [];
+  List<Vehicle> _vehicles = [];
+  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _alerts = List.from(SampleData.alerts);
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    try {
+      final results = await Future.wait([
+        _api.getAlerts(),
+        _api.getVehicles(),
+      ]);
+      if (!mounted) return;
+      setState(() {
+        _alerts = results[0] as List<AlertItem>;
+        _vehicles = results[1] as List<Vehicle>;
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _loading = false);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e is ApiException ? e.message : 'Failed to load alerts'),
+        backgroundColor: AppColors.red,
+      ));
+    }
   }
 
   List<AlertItem> get _filtered {
@@ -35,19 +61,29 @@ class _AlertsScreenState extends State<AlertsScreen> {
     return _alerts;
   }
 
-  void _resolveAlert(AlertItem alert) {
-    setState(() => _alerts.remove(alert));
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('${alert.title} resolved'),
-      backgroundColor: AppColors.teal,
-      behavior: SnackBarBehavior.floating,
-    ));
+  Future<void> _resolveAlert(AlertItem alert) async {
+    try {
+      await _api.deleteAlert(alert.title);
+      if (!mounted) return;
+      setState(() => _alerts.remove(alert));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('${alert.title} resolved'),
+        backgroundColor: AppColors.teal,
+        behavior: SnackBarBehavior.floating,
+      ));
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e is ApiException ? e.message : 'Failed to resolve alert'),
+        backgroundColor: AppColors.red,
+      ));
+    }
   }
 
   void _viewOnMap(AlertItem alert) {
     try {
       final vehicle =
-          SampleData.vehicles.firstWhere((v) => v.id == alert.vehicleId);
+          _vehicles.firstWhere((v) => v.id == alert.vehicleId);
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -63,7 +99,9 @@ class _AlertsScreenState extends State<AlertsScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.navy,
-      body: Column(
+      body: _loading
+          ? const Center(child: CircularProgressIndicator(color: AppColors.teal))
+          : Column(
         children: [
           SizedBox(height: topPad),
           Padding(
@@ -81,13 +119,24 @@ class _AlertsScreenState extends State<AlertsScreen> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
-                    setState(() => _alerts.clear());
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('All alerts resolved'),
-                      backgroundColor: AppColors.teal,
-                      behavior: SnackBarBehavior.floating,
-                    ));
+                  onTap: () async {
+                    final messenger = ScaffoldMessenger.of(context);
+                    try {
+                      await _api.clearAllAlerts();
+                      if (!mounted) return;
+                      setState(() => _alerts.clear());
+                      messenger.showSnackBar(const SnackBar(
+                        content: Text('All alerts resolved'),
+                        backgroundColor: AppColors.teal,
+                        behavior: SnackBarBehavior.floating,
+                      ));
+                    } catch (e) {
+                      if (!mounted) return;
+                      messenger.showSnackBar(SnackBar(
+                        content: Text(e is ApiException ? e.message : 'Failed to resolve alerts'),
+                        backgroundColor: AppColors.red,
+                      ));
+                    }
                   },
                   child: Text('Mark all read',
                       style: AppText.dm(

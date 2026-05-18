@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 import '../models/models.dart';
+import '../services/api_service.dart';
+import '../theme/app_theme.dart';
 import '../widgets/shared_widgets.dart';
 import 'vehicle_detail_screen.dart';
 
@@ -12,9 +13,36 @@ class FleetScreen extends StatefulWidget {
 }
 
 class _FleetScreenState extends State<FleetScreen> {
+  final _api = ApiService();
   int _filterIndex = 0;
-  bool _isEmpty = false;
   final _searchController = TextEditingController();
+  List<Vehicle> _vehicles = [];
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchVehicles();
+    _searchController.addListener(() => setState(() {}));
+  }
+
+  Future<void> _fetchVehicles() async {
+    try {
+      final vehicles = await _api.getVehicles();
+      if (!mounted) return;
+      setState(() {
+        _vehicles = vehicles;
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _loading = false);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e is ApiException ? e.message : 'Failed to load vehicles'),
+        backgroundColor: AppColors.red,
+      ));
+    }
+  }
 
   @override
   void dispose() {
@@ -23,16 +51,20 @@ class _FleetScreenState extends State<FleetScreen> {
   }
 
   List<Vehicle> get _filtered {
-    if (_filterIndex == 1) {
-      return SampleData.vehicles
-          .where((v) => v.status == VehicleStatus.moving)
-          .toList();
-    } else if (_filterIndex == 2) {
-      return SampleData.vehicles
-          .where((v) => v.status == VehicleStatus.alert)
-          .toList();
+    final q = _searchController.text.trim().toLowerCase();
+    var list = _vehicles;
+    if (q.isNotEmpty) {
+      list = list.where((v) =>
+          v.name.toLowerCase().contains(q) ||
+          v.plate.toLowerCase().contains(q) ||
+          v.location.toLowerCase().contains(q)).toList();
     }
-    return SampleData.vehicles;
+    if (_filterIndex == 1) {
+      return list.where((v) => v.status == VehicleStatus.moving).toList();
+    } else if (_filterIndex == 2) {
+      return list.where((v) => v.status == VehicleStatus.alert).toList();
+    }
+    return list;
   }
 
   void _openAddVehicle() {
@@ -46,9 +78,7 @@ class _FleetScreenState extends State<FleetScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.navy,
-      floatingActionButton: _isEmpty
-          ? null
-          : FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
               onPressed: _openAddVehicle,
               backgroundColor: AppColors.teal,
               foregroundColor: const Color(0xFF050C1A),
@@ -56,7 +86,9 @@ class _FleetScreenState extends State<FleetScreen> {
                   borderRadius: BorderRadius.circular(14)),
               child: const Icon(Icons.add_rounded, size: 22),
             ),
-      body: Column(
+      body: _loading
+          ? const Center(child: CircularProgressIndicator(color: AppColors.teal))
+          : Column(
         children: [
           SizedBox(height: topPad),
           Padding(
@@ -69,36 +101,15 @@ class _FleetScreenState extends State<FleetScreen> {
                     children: [
                       Text('My Fleet', style: AppText.syne(size: 18)),
                       Text(
-                        _isEmpty
-                            ? '0 vehicles'
-                            : '${SampleData.vehicles.length} vehicles · 1 alert',
+                        '${_vehicles.length} vehicles · ${_vehicles.where((v) => v.status == VehicleStatus.alert).length} alert',
                         style: AppText.dm(size: 11, color: AppColors.muted),
                       ),
                     ],
                   ),
                 ),
-                Tooltip(
-                  message: _isEmpty ? 'Show vehicles' : 'Toggle empty state',
-                  child: GestureDetector(
-                    onTap: () => setState(() => _isEmpty = !_isEmpty),
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppColors.navy3,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: AppColors.border),
-                      ),
-                      child: const Icon(Icons.tune_rounded,
-                          size: 20, color: AppColors.muted),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
-          if (_isEmpty) ...[
-            Expanded(child: _EmptyState(onAdd: _openAddVehicle)),
-          ] else ...[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14),
               child: Container(
@@ -138,17 +149,17 @@ class _FleetScreenState extends State<FleetScreen> {
                 scrollDirection: Axis.horizontal,
                 children: [
                   _FilterChip(
-                      label: 'All (3)',
+                      label: 'All (${_vehicles.length})',
                       active: _filterIndex == 0,
                       onTap: () => setState(() => _filterIndex = 0)),
                   const SizedBox(width: 6),
                   _FilterChip(
-                      label: 'Moving (1)',
+                      label: 'Moving (${_vehicles.where((v) => v.status == VehicleStatus.moving).length})',
                       active: _filterIndex == 1,
                       onTap: () => setState(() => _filterIndex = 1)),
                   const SizedBox(width: 6),
                   _FilterChip(
-                      label: 'Alert (1)',
+                      label: 'Alert (${_vehicles.where((v) => v.status == VehicleStatus.alert).length})',
                       active: _filterIndex == 2,
                       onTap: () => setState(() => _filterIndex = 2)),
                 ],
@@ -188,7 +199,6 @@ class _FleetScreenState extends State<FleetScreen> {
               ),
             ),
           ],
-        ],
       ),
     );
   }
@@ -346,51 +356,6 @@ class _StatMini extends StatelessWidget {
   }
 }
 
-class _EmptyState extends StatelessWidget {
-  final VoidCallback onAdd;
-
-  const _EmptyState({required this.onAdd});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: AppColors.teal.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(24),
-                border:
-                    Border.all(color: AppColors.teal.withValues(alpha: 0.15)),
-              ),
-              child: Icon(Icons.directions_car_rounded,
-                  size: 42, color: AppColors.teal.withValues(alpha: 0.5)),
-            ),
-            const SizedBox(height: 20),
-            Text('No vehicles yet', style: AppText.syne(size: 16)),
-            const SizedBox(height: 8),
-            Text(
-                'Add your first vehicle to start tracking\nyour fleet in real-time.',
-                style: AppText.dm(size: 13, color: AppColors.muted),
-                textAlign: TextAlign.center),
-            const SizedBox(height: 24),
-            PrimaryButton(
-                label: 'Add First Vehicle',
-                icon: Icons.add_circle_outline_rounded,
-                onTap: onAdd,
-                fullWidth: false),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class AddVehicleScreen extends StatefulWidget {
   const AddVehicleScreen({super.key});
 
@@ -399,6 +364,8 @@ class AddVehicleScreen extends StatefulWidget {
 }
 
 class _AddVehicleScreenState extends State<AddVehicleScreen> {
+  final _api = ApiService();
+  bool _saving = false;
   double _speedLimit = 80;
   final _plateController = TextEditingController();
   final _modelController = TextEditingController();
@@ -412,6 +379,32 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     _yearController.dispose();
     _serialController.dispose();
     super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (_plateController.text.trim().isEmpty || _modelController.text.trim().isEmpty) return;
+    setState(() => _saving = true);
+    try {
+      await _api.createVehicle({
+        'name': _modelController.text.trim(),
+        'plate': _plateController.text.trim().toUpperCase(),
+        'mileage': 0,
+      });
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Vehicle added'),
+        backgroundColor: AppColors.teal,
+      ));
+      Navigator.pop(context, true);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e is ApiException ? e.message : 'Failed to add vehicle'),
+        backgroundColor: AppColors.red,
+      ));
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   @override
@@ -602,9 +595,9 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                   ),
                   const SizedBox(height: 16),
                   PrimaryButton(
-                    label: 'Add Vehicle',
+                    label: _saving ? 'Saving\u2026' : 'Add Vehicle',
                     icon: Icons.add_circle_outline_rounded,
-                    onTap: () => Navigator.pop(context),
+                    onTap: _saving ? null : _submit,
                   ),
                 ],
               ),

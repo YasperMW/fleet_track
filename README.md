@@ -96,7 +96,6 @@ lib/
 
 To connect to a real backend, replace `SampleData` with API calls:
 
-- **Map:** Integrate `google_maps_flutter` or `flutter_map` for real maps
 - **GPS data:** Connect to your fleet tracking API via HTTP/WebSocket
 - **Auth:** Add Firebase Auth or your custom auth layer
 - **Push notifications:** Add `firebase_messaging` for real-time alerts
@@ -107,6 +106,8 @@ To connect to a real backend, replace `SampleData` with API calls:
 
 ```yaml
 google_fonts: ^6.1.0    # DM Sans, Syne, Space Mono
-fl_chart: ^0.68.0       # Charts (ready to use in reports)
-cupertino_icons: ^1.0.2
+flutter_map: ^7.0.2     # OpenStreetMap tiles, no API key needed
+latlong2: ^0.9.1
+http: ^1.6.0
+shared_preferences: ^2.5.5
 ```

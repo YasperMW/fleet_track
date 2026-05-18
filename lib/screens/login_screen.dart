@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
 import '../theme/app_theme.dart';
 import 'main_shell.dart';
 
@@ -10,38 +11,38 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _api = ApiService();
   final _emailController = TextEditingController(text: 'admin@fleet.co');
   final _passwordController = TextEditingController(text: 'admin123');
   bool _obscurePassword = true;
   bool _isLoading = false;
   String? _error;
 
-  static const _hardcodedEmail = 'admin@fleet.co';
-  static const _hardcodedPassword = 'admin123';
-
-  void _login() {
+  void _login() async {
     setState(() {
       _isLoading = true;
       _error = null;
     });
 
-    Future.delayed(const Duration(milliseconds: 600), () {
+    try {
+      await _api.login(
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
       if (!mounted) return;
-      final email = _emailController.text.trim();
-      final password = _passwordController.text;
-
-      if (email == _hardcodedEmail && password == _hardcodedPassword) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const MainShell()),
-        );
-      } else {
-        setState(() {
-          _isLoading = false;
-          _error = 'Invalid email or password';
-        });
-      }
-    });
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const MainShell()),
+      );
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() => _error = e.message);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _error = 'Connection error. Is the server running?');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override

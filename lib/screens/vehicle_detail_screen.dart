@@ -1,12 +1,38 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/models.dart';
+import '../services/api_service.dart';
+import '../theme/app_theme.dart';
 import '../widgets/shared_widgets.dart';
+import 'package:fleet_track/screens/route_replay_screen.dart';
 
 class VehicleDetailScreen extends StatelessWidget {
   final Vehicle vehicle;
 
   const VehicleDetailScreen({super.key, required this.vehicle});
+
+  Future<void> _openInMaps(BuildContext context) async {
+    final lat = vehicle.lat;
+    final lng = vehicle.lng;
+    if (lat == null || lng == null) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text('No coordinates available for this vehicle'),
+        backgroundColor: AppColors.red,
+      ));
+      return;
+    }
+    final uri = Uri.parse('https://www.google.com/maps/search/?api=1&query=$lat,$lng');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text('Could not open maps'),
+        backgroundColor: AppColors.red,
+      ));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +139,7 @@ class VehicleDetailScreen extends StatelessWidget {
                                   border: Border.all(
                                       color: AppColors.teal
                                           .withValues(alpha: 0.3))),
-                              child: Text('62 km/h',
+                              child: Text('${vehicle.speed.toInt()} km/h',
                                   style: AppText.mono(
                                       size: 9, color: AppColors.teal)),
                             ),
@@ -121,16 +147,19 @@ class VehicleDetailScreen extends StatelessWidget {
                           Positioned(
                             bottom: 8,
                             right: 8,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                  color: AppColors.navy.withValues(alpha: 0.9),
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(color: AppColors.border)),
-                              child: Text('Open in Maps ↗',
-                                  style: AppText.dm(
-                                      size: 11, color: AppColors.teal)),
+                            child: GestureDetector(
+                              onTap: () => _openInMaps(context),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                    color: AppColors.navy.withValues(alpha: 0.9),
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(color: AppColors.border)),
+                                child: Text('Open in Maps ↗',
+                                    style: AppText.dm(
+                                        size: 11, color: AppColors.teal)),
+                              ),
                             ),
                           ),
                         ],
@@ -222,15 +251,15 @@ class VehicleDetailScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Row(
+                  Row(
                     children: [
                       Expanded(
                           child: _MiniStatCard(
                               label: 'Odometer',
-                              value: '48,201',
+                              value: '${vehicle.mileage}',
                               unit: 'km total')),
-                      SizedBox(width: 8),
-                      Expanded(
+                      const SizedBox(width: 8),
+                      const Expanded(
                           child: _MiniStatCard(
                               label: 'Today dist.',
                               value: '142',
@@ -274,7 +303,7 @@ class VehicleDetailScreen extends StatelessWidget {
                                   style: AppText.dm(
                                       size: 13, weight: FontWeight.w600)),
                               const SizedBox(height: 3),
-                              Text('-11.4643, 34.0155',
+                              Text('${vehicle.mileage} km total',
                                   style: AppText.mono(
                                       size: 11, color: AppColors.muted)),
                             ],
@@ -295,17 +324,6 @@ class VehicleDetailScreen extends StatelessWidget {
                             MaterialPageRoute(
                                 builder: (_) =>
                                     TripHistoryScreen(vehicle: vehicle))),
-                      )),
-                      const SizedBox(width: 8),
-                      Expanded(
-                          child: _ActionBtn(
-                        icon: Icons.replay_rounded,
-                        label: 'Route Replay',
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) =>
-                                    RouteReplayScreen(vehicle: vehicle))),
                       )),
                     ],
                   ),
@@ -471,20 +489,53 @@ class _TimelineItem extends StatelessWidget {
   }
 }
 
-class TripHistoryScreen extends StatelessWidget {
+class TripHistoryScreen extends StatefulWidget {
   final Vehicle vehicle;
 
   const TripHistoryScreen({super.key, required this.vehicle});
 
   @override
-  Widget build(BuildContext context) {
-    final topPad = MediaQuery.of(context).padding.top;
+  State<TripHistoryScreen> createState() => _TripHistoryScreenState();
+}
 
+class _TripHistoryScreenState extends State<TripHistoryScreen> {
+  final _api = ApiService();
+  List<TripRecord> _trips = [];
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetch();
+  }
+
+  Future<void> _fetch() async {
+    try {
+      final trips = await _api.getTrips(vehicleId: widget.vehicle.id);
+      if (!mounted) return;
+      setState(() {
+        _trips = trips;
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _loading = false);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e is ApiException ? e.message : 'Failed to load trips'),
+        backgroundColor: AppColors.red,
+      ));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.navy,
-      body: Column(
+      body: _loading
+          ? const Center(child: CircularProgressIndicator(color: AppColors.teal))
+          : Column(
         children: [
-          SizedBox(height: topPad),
+          SizedBox(height: MediaQuery.of(context).padding.top),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
             child: Row(
@@ -517,20 +568,22 @@ class TripHistoryScreen extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView(
+            child: _trips.isEmpty
+                ? Center(
+                    child: Text('No trips found',
+                        style: AppText.dm(size: 13, color: AppColors.muted)))
+                : ListView(
               padding: const EdgeInsets.fromLTRB(14, 0, 14, 40),
               children: [
-                const _DateLabel('Today — 15 May 2026'),
-                _TripCard(
-                    trip: SampleData.trips[0],
-                    tagText: '▶ Active',
-                    tagColor: AppColors.teal),
-                const SizedBox(height: 14),
-                const _DateLabel('Yesterday — 14 May'),
-                _TripCard(
-                    trip: SampleData.trips[1],
-                    tagText: '■ Complete',
-                    tagColor: AppColors.muted),
+                const _DateLabel('Today'),
+                ..._trips.map((t) => Padding(
+                  padding: const EdgeInsets.only(bottom: 14),
+                  child: _TripCard(
+                    trip: t,
+                    tagText: t.isActive ? '\u25B6 Active' : '\u25A0 Complete',
+                    tagColor: t.isActive ? AppColors.teal : AppColors.muted,
+                  ),
+                )),
               ],
             ),
           ),
@@ -643,6 +696,33 @@ class _TripCard extends StatelessWidget {
             Text(trip.destination,
                 style: AppText.dm(size: 12, color: AppColors.text2)),
           ]),
+          const SizedBox(height: 10),
+          GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => RouteReplayScreen(trip: trip),
+              ),
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.teal.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.play_circle_outline_rounded,
+                      size: 14, color: AppColors.teal),
+                  const SizedBox(width: 6),
+                  Text('Replay Route',
+                      style: AppText.dm(
+                          size: 12, color: AppColors.teal, weight: FontWeight.w600)),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -668,340 +748,4 @@ class _TripStat extends StatelessWidget {
   }
 }
 
-class RouteReplayScreen extends StatefulWidget {
-  final Vehicle vehicle;
-  const RouteReplayScreen({super.key, required this.vehicle});
-  @override
-  State<RouteReplayScreen> createState() => _RouteReplayScreenState();
-}
 
-class _RouteReplayScreenState extends State<RouteReplayScreen> {
-  bool _isPlaying = false;
-  double _progress = 0.42;
-  int _speed = 1;
-
-  @override
-  Widget build(BuildContext context) {
-    final topPad = MediaQuery.of(context).padding.top;
-    final size = MediaQuery.of(context).size;
-
-    return Scaffold(
-      backgroundColor: AppColors.navy,
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Container(
-              color: const Color(0xFF0E1E38),
-              child: Stack(
-                children: [
-                  CustomPaint(size: Size.infinite, painter: GridPainter()),
-                  Positioned(
-                      top: size.height * 0.45,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                          height: 5,
-                          color: AppColors.blue.withValues(alpha: 0.18))),
-                  Positioned(
-                      top: size.height * 0.65,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                          height: 8,
-                          color: AppColors.blue.withValues(alpha: 0.25))),
-                  Positioned(
-                      left: size.width * 0.3,
-                      top: 0,
-                      bottom: 0,
-                      child: Container(
-                          width: 5,
-                          color: AppColors.blue.withValues(alpha: 0.18))),
-                  Positioned(
-                      left: size.width * 0.6,
-                      top: 0,
-                      bottom: 0,
-                      child: Container(
-                          width: 8,
-                          color: AppColors.blue.withValues(alpha: 0.25))),
-                  CustomPaint(
-                      size: Size.infinite,
-                      painter: _RoutePainter(progress: _progress)),
-                  Positioned(
-                      top: size.height * 0.52,
-                      left: size.width * 0.58,
-                      child: Container(
-                          width: 22,
-                          height: 22,
-                          decoration: BoxDecoration(
-                              color: AppColors.teal,
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 2),
-                              boxShadow: [
-                                BoxShadow(
-                                    color:
-                                        AppColors.teal.withValues(alpha: 0.4),
-                                    blurRadius: 12,
-                                    spreadRadius: 3)
-                              ]),
-                          alignment: Alignment.center,
-                          child: const Text('▶',
-                              style: TextStyle(
-                                  fontSize: 7,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.black)))),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              color: AppColors.navy.withValues(alpha: 0.7),
-              padding: EdgeInsets.only(top: topPad),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: AppColors.navy.withValues(alpha: 0.93),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.arrow_back_ios_rounded,
-                                size: 18, color: AppColors.teal),
-                            const SizedBox(width: 4),
-                            Text('Fleet',
-                                style: AppText.dm(
-                                    size: 13, color: AppColors.teal)),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                          child: Text('Route Replay — Trip #1',
-                              style: AppText.syne(size: 13))),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                            color: AppColors.teal.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                                color: AppColors.teal.withValues(alpha: 0.25))),
-                        child: Text('▶ Live',
-                            style: AppText.dm(
-                                size: 10,
-                                color: AppColors.teal,
-                                weight: FontWeight.w600)),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 20),
-              decoration: BoxDecoration(
-                color: AppColors.navy.withValues(alpha: 0.97),
-                border: const Border(top: BorderSide(color: AppColors.border)),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('07:14',
-                          style:
-                              AppText.mono(size: 11, color: AppColors.muted)),
-                      Text('09:41',
-                          style: AppText.mono(
-                              size: 11,
-                              color: AppColors.teal,
-                              weight: FontWeight.w700)),
-                      Text('16:45',
-                          style:
-                              AppText.mono(size: 11, color: AppColors.muted)),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      activeTrackColor: AppColors.teal,
-                      inactiveTrackColor: AppColors.navy3,
-                      thumbColor: Colors.white,
-                      overlayColor: AppColors.teal.withValues(alpha: 0.1),
-                      thumbShape:
-                          const RoundSliderThumbShape(enabledThumbRadius: 7),
-                      trackHeight: 4,
-                      overlayShape: SliderComponentShape.noOverlay,
-                    ),
-                    child: Slider(
-                      value: _progress,
-                      onChanged: (v) => setState(() => _progress = v),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(children: [
-                        GestureDetector(
-                            onTap: () => setState(() => _progress = 0),
-                            child: const Icon(Icons.skip_previous_rounded,
-                                size: 22, color: AppColors.text)),
-                        const SizedBox(width: 14),
-                        GestureDetector(
-                          onTap: () => setState(() => _isPlaying = !_isPlaying),
-                          child: Container(
-                            width: 44,
-                            height: 44,
-                            decoration: const BoxDecoration(
-                              gradient: LinearGradient(
-                                  colors: [AppColors.teal, AppColors.blue]),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                                _isPlaying
-                                    ? Icons.pause_rounded
-                                    : Icons.play_arrow_rounded,
-                                color: const Color(0xFF050C1A),
-                                size: 26),
-                          ),
-                        ),
-                        const SizedBox(width: 14),
-                        GestureDetector(
-                            onTap: () => setState(() => _progress = 1.0),
-                            child: const Icon(Icons.skip_next_rounded,
-                                size: 22, color: AppColors.text)),
-                      ]),
-                      Row(children: [
-                        _SpeedChip(
-                            speed: 1,
-                            active: _speed == 1,
-                            onTap: () => setState(() => _speed = 1)),
-                        const SizedBox(width: 6),
-                        _SpeedChip(
-                            speed: 2,
-                            active: _speed == 2,
-                            onTap: () => setState(() => _speed = 2)),
-                      ]),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(children: [
-                    const Expanded(
-                        child: _ReplayStat(
-                            value: '62', unit: 'km/h', color: AppColors.teal)),
-                    Container(width: 1, height: 40, color: AppColors.border),
-                    const Expanded(child: _ReplayStat(value: '86', unit: 'km done')),
-                    Container(width: 1, height: 40, color: AppColors.border),
-                    const Expanded(
-                        child: _ReplayStat(
-                            value: 'ON',
-                            unit: 'engine',
-                            color: AppColors.teal)),
-                  ]),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SpeedChip extends StatelessWidget {
-  final int speed;
-  final bool active;
-  final VoidCallback onTap;
-  const _SpeedChip(
-      {required this.speed, required this.active, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        decoration: BoxDecoration(
-          color: active ? AppColors.teal : AppColors.navy3,
-          borderRadius: BorderRadius.circular(6),
-          border: Border.all(color: active ? AppColors.teal : AppColors.border),
-        ),
-        child: Text('$speed×',
-            style: AppText.mono(
-                size: 11,
-                color: active ? const Color(0xFF000000) : AppColors.muted,
-                weight: FontWeight.w700)),
-      ),
-    );
-  }
-}
-
-class _ReplayStat extends StatelessWidget {
-  final String value, unit;
-  final Color? color;
-  const _ReplayStat({required this.value, required this.unit, this.color});
-  @override
-  Widget build(BuildContext context) {
-    return Column(children: [
-      Text(value,
-          style: AppText.syne(
-              size: 14,
-              color: color ?? AppColors.text,
-              weight: FontWeight.w700)),
-      Text(unit, style: AppText.dm(size: 11, color: AppColors.muted)),
-    ]);
-  }
-}
-
-class _RoutePainter extends CustomPainter {
-  final double progress;
-  _RoutePainter({required this.progress});
-  @override
-  void paint(Canvas canvas, Size size) {
-    final path = Path()
-      ..moveTo(size.width * 0.1, size.height * 0.7)
-      ..lineTo(size.width * 0.22, size.height * 0.7)
-      ..lineTo(size.width * 0.3, size.height * 0.65)
-      ..lineTo(size.width * 0.42, size.height * 0.65)
-      ..lineTo(size.width * 0.5, size.height * 0.58)
-      ..lineTo(size.width * 0.58, size.height * 0.55)
-      ..lineTo(size.width * 0.68, size.height * 0.5)
-      ..lineTo(size.width * 0.75, size.height * 0.48);
-    final paint = Paint()
-      ..color = AppColors.teal.withValues(alpha: 0.8)
-      ..strokeWidth = 3
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-    canvas.drawPath(path, paint);
-    canvas.drawCircle(Offset(size.width * 0.1, size.height * 0.7), 6,
-        Paint()..color = AppColors.teal);
-    canvas.drawCircle(
-        Offset(size.width * 0.1, size.height * 0.7),
-        6,
-        Paint()
-          ..color = Colors.white
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2);
-  }
-
-  @override
-  bool shouldRepaint(_RoutePainter old) => old.progress != progress;
-}

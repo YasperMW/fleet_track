@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 
 enum VehicleStatus { moving, parked, alert }
 
@@ -12,6 +11,8 @@ class Vehicle {
   final String location;
   final IconData icon;
   final int mileage;
+  final double? lat;
+  final double? lng;
 
   const Vehicle({
     required this.id,
@@ -22,6 +23,8 @@ class Vehicle {
     required this.location,
     required this.icon,
     required this.mileage,
+    this.lat,
+    this.lng,
   });
 }
 
@@ -42,6 +45,22 @@ class AlertItem {
 }
 
 enum AlertSeverity { critical, warning, info }
+
+class RoutePoint {
+  final String id;
+  final String tripId;
+  final double lat;
+  final double lng;
+  final String recordedAt;
+
+  const RoutePoint({
+    required this.id,
+    required this.tripId,
+    required this.lat,
+    required this.lng,
+    required this.recordedAt,
+  });
+}
 
 class TripRecord {
   final String id;
@@ -69,6 +88,28 @@ class TripRecord {
   });
 }
 
+class Geofence {
+  final String id;
+  final String name;
+  final String zoneType;
+  final int? radiusM;
+  final double lat;
+  final double lng;
+  final String status;
+  final String triggerOn;
+
+  const Geofence({
+    required this.id,
+    required this.name,
+    required this.zoneType,
+    this.radiusM,
+    required this.lat,
+    required this.lng,
+    required this.status,
+    required this.triggerOn,
+  });
+}
+
 class AppUser {
   final String initials;
   final String name;
@@ -85,130 +126,4 @@ class AppUser {
   });
 }
 
-// Sample data
-class SampleData {
-  static const vehicles = [
-    Vehicle(
-      id: 'v1',
-      name: 'Toyota Hiace',
-      plate: 'MWI-2341',
-      status: VehicleStatus.moving,
-      speed: 62,
-      location: 'M1 Road, Lilongwe',
-      icon: Icons.airport_shuttle_rounded,
-      mileage: 45230,
-    ),
-    Vehicle(
-      id: 'v2',
-      name: 'Isuzu Pickup',
-      plate: 'MWI-5512',
-      status: VehicleStatus.parked,
-      speed: 0,
-      location: 'Mzuzu Depot, Area 18',
-      icon: Icons.local_shipping_rounded,
-      mileage: 38110,
-    ),
-    Vehicle(
-      id: 'v3',
-      name: 'Mitsubishi L200',
-      plate: 'MWI-7789',
-      status: VehicleStatus.alert,
-      speed: 0,
-      location: 'Mzuzu M1 Rd',
-      icon: Icons.directions_car_rounded,
-      mileage: 19111,
-    ),
-  ];
 
-  static const alerts = [
-    AlertItem(
-      title: 'V3 — Tamper detected',
-      message: 'Device cover opened at 14:32 · Mzuzu M1 Rd',
-      time: '14:32',
-      severity: AlertSeverity.critical,
-      vehicleId: 'v3',
-    ),
-    AlertItem(
-      title: 'V1 — Speed limit exceeded',
-      message: 'Toyota Hiace exceeded 80 km/h on M1 Road',
-      time: '09:15',
-      severity: AlertSeverity.warning,
-      vehicleId: 'v1',
-    ),
-    AlertItem(
-      title: 'V2 — Geofence exit',
-      message: 'Isuzu Pickup left Mzuzu Depot zone',
-      time: '08:44',
-      severity: AlertSeverity.info,
-      vehicleId: 'v2',
-    ),
-    AlertItem(
-      title: 'V1 — Low battery',
-      message: 'GPS device battery at 12%',
-      time: '07:30',
-      severity: AlertSeverity.warning,
-      vehicleId: 'v1',
-    ),
-  ];
-
-  static final trips = [
-    const TripRecord(
-      id: 't1',
-      vehicleId: 'v1',
-      startTime: '07:14',
-      endTime: '09:41',
-      distanceKm: 142,
-      durationHrs: 2.45,
-      avgSpeed: 58,
-      origin: 'Mzuzu Depot, Area 18',
-      destination: 'M1 Road · In Progress',
-      isActive: true,
-    ),
-    const TripRecord(
-      id: 't2',
-      vehicleId: 'v1',
-      startTime: '13:10',
-      endTime: '16:45',
-      distanceKm: 203,
-      durationHrs: 3.58,
-      avgSpeed: 57,
-      origin: 'Lilongwe City Centre',
-      destination: 'Kasungu Depot',
-      isActive: false,
-    ),
-  ];
-
-  static const users = [
-    AppUser(
-      initials: 'FM',
-      name: 'Fleet Manager',
-      email: 'admin@fleet.co',
-      role: 'Admin',
-      avatarColor: AppColors.teal,
-    ),
-    AppUser(
-      initials: 'JK',
-      name: 'James K.',
-      email: 'james@fleet.co',
-      role: 'Manager',
-      avatarColor: AppColors.blue,
-    ),
-    AppUser(
-      initials: 'SP',
-      name: 'Sarah P.',
-      email: 'sarah@fleet.co',
-      role: 'Manager',
-      avatarColor: AppColors.amber,
-    ),
-    AppUser(
-      initials: 'BM',
-      name: 'Ben M.',
-      email: 'ben@fleet.co',
-      role: 'Viewer',
-      avatarColor: Color(0xFF8B5CF6),
-    ),
-  ];
-
-  static const weeklyMileage = [120.0, 180.0, 150.0, 210.0, 95.0, 160.0, 200.0];
-  static const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-}
