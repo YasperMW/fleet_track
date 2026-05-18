@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../models/models.dart';
+
 class ReportsScreen extends StatefulWidget {
   const ReportsScreen({super.key});
 
@@ -30,7 +31,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: AppColors.border),
                   ),
-                  child: const Icon(Icons.upload_rounded, size: 20, color: AppColors.muted),
+                  child: const Icon(Icons.upload_rounded,
+                      size: 20, color: AppColors.muted),
                 ),
               ],
             ),
@@ -50,29 +52,44 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.date_range_rounded, size: 22, color: AppColors.blue),
+                        const Icon(Icons.date_range_rounded,
+                            size: 22, color: AppColors.blue),
                         const SizedBox(width: 10),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Date range', style: AppText.dm(size: 11, color: AppColors.muted)),
+                              Text('Date range',
+                                  style: AppText.dm(
+                                      size: 11, color: AppColors.muted)),
                               const SizedBox(height: 3),
-                              Text('1 May — 15 May 2026', style: AppText.dm(size: 13, weight: FontWeight.w600)),
+                              Text('1 May — 15 May 2026',
+                                  style: AppText.dm(
+                                      size: 13, weight: FontWeight.w600)),
                             ],
                           ),
                         ),
-                        Text('Edit \u203A', style: AppText.dm(size: 13, color: AppColors.teal, weight: FontWeight.w600)),
+                        Text('Edit \u203A',
+                            style: AppText.dm(
+                                size: 13,
+                                color: AppColors.teal,
+                                weight: FontWeight.w600)),
                       ],
                     ),
                   ),
                   const SizedBox(height: 14),
-                  Row(children: [
-                    Expanded(child: _KpiCard(value: '3,241', unit: 'km', color: AppColors.teal)),
-                    const SizedBox(width: 6),
+                  const Row(children: [
+                    Expanded(
+                        child: _KpiCard(
+                            value: '3,241', unit: 'km', color: AppColors.teal)),
+                    SizedBox(width: 6),
                     Expanded(child: _KpiCard(value: '47', unit: 'trips')),
-                    const SizedBox(width: 6),
-                    Expanded(child: _KpiCard(value: '6', unit: 'alerts', color: AppColors.amber)),
+                    SizedBox(width: 6),
+                    Expanded(
+                        child: _KpiCard(
+                            value: '6',
+                            unit: 'alerts',
+                            color: AppColors.amber)),
                   ]),
                   const SizedBox(height: 10),
                   Container(
@@ -85,37 +102,63 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Daily Mileage', style: AppText.dm(size: 13, weight: FontWeight.w600)),
+                        Text('Daily Mileage',
+                            style:
+                                AppText.dm(size: 13, weight: FontWeight.w600)),
                         const SizedBox(height: 10),
                         SizedBox(
                           height: 60,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              for (int i = 0; i < SampleData.weeklyMileage.length; i++) ...[
+                              for (int i = 0;
+                                  i < SampleData.weeklyMileage.length;
+                                  i++) ...[
                                 Expanded(
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 3),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 3),
                                         child: Container(
-                                          height: 48 * (SampleData.weeklyMileage[i] / 210),
+                                          height: 48 *
+                                              (SampleData.weeklyMileage[i] /
+                                                  210),
                                           decoration: BoxDecoration(
                                             gradient: LinearGradient(
-                                              begin: Alignment.bottomCenter, end: Alignment.topCenter,
+                                              begin: Alignment.bottomCenter,
+                                              end: Alignment.topCenter,
                                               colors: i == 3
-                                                  ? [AppColors.amber, AppColors.amber.withOpacity(0.4)]
+                                                  ? [
+                                                      AppColors.amber,
+                                                      AppColors.amber
+                                                          .withValues(
+                                                              alpha: 0.4)
+                                                    ]
                                                   : i == 9
-                                                      ? [AppColors.red, AppColors.red.withOpacity(0.4)]
-                                                      : [AppColors.teal, AppColors.teal.withOpacity(0.4)],
+                                                      ? [
+                                                          AppColors.red,
+                                                          AppColors.red
+                                                              .withValues(
+                                                                  alpha: 0.4)
+                                                        ]
+                                                      : [
+                                                          AppColors.teal,
+                                                          AppColors.teal
+                                                              .withValues(
+                                                                  alpha: 0.4)
+                                                        ],
                                             ),
-                                            borderRadius: BorderRadius.circular(3),
+                                            borderRadius:
+                                                BorderRadius.circular(3),
                                           ),
                                         ),
                                       ),
                                       const SizedBox(height: 4),
-                                      Text(SampleData.weekDays[i], style: AppText.mono(size: 9, color: AppColors.muted)),
+                                      Text(SampleData.weekDays[i],
+                                          style: AppText.mono(
+                                              size: 9, color: AppColors.muted)),
                                     ],
                                   ),
                                 ),
@@ -129,9 +172,12 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   ),
                   const SizedBox(height: 14),
                   Text('EXPORT REPORTS'.toUpperCase(),
-                      style: AppText.dm(size: 11, color: AppColors.muted, weight: FontWeight.w600)),
+                      style: AppText.dm(
+                          size: 11,
+                          color: AppColors.muted,
+                          weight: FontWeight.w600)),
                   const SizedBox(height: 8),
-                  _ReportRow(
+                  const _ReportRow(
                     icon: Icons.description_rounded,
                     iconColor: AppColors.teal,
                     title: 'Fleet Summary',
@@ -139,7 +185,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     badge: 'PDF',
                     badgeColor: AppColors.teal,
                   ),
-                  _ReportRow(
+                  const _ReportRow(
                     icon: Icons.speed_rounded,
                     iconColor: AppColors.blue,
                     title: 'Speed Violations',
@@ -147,7 +193,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     badge: 'CSV',
                     badgeColor: AppColors.blue,
                   ),
-                  _ReportRow(
+                  const _ReportRow(
                     icon: Icons.notifications_active_rounded,
                     iconColor: AppColors.red,
                     title: 'Tamper Log',
@@ -180,7 +226,11 @@ class _KpiCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(value, style: AppText.syne(size: 17, color: color ?? AppColors.text, weight: FontWeight.w800)),
+          Text(value,
+              style: AppText.syne(
+                  size: 17,
+                  color: color ?? AppColors.text,
+                  weight: FontWeight.w800)),
           Text(unit, style: AppText.dm(size: 11, color: AppColors.muted)),
         ],
       ),
@@ -194,7 +244,13 @@ class _ReportRow extends StatelessWidget {
   final String title, subtitle, badge;
   final Color badgeColor;
 
-  const _ReportRow({required this.icon, required this.iconColor, required this.title, required this.subtitle, required this.badge, required this.badgeColor});
+  const _ReportRow(
+      {required this.icon,
+      required this.iconColor,
+      required this.title,
+      required this.subtitle,
+      required this.badge,
+      required this.badgeColor});
 
   @override
   Widget build(BuildContext context) {
@@ -209,8 +265,11 @@ class _ReportRow extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 40, height: 40,
-            decoration: BoxDecoration(color: iconColor.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+                color: iconColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(10)),
             child: Icon(icon, size: 20, color: iconColor),
           ),
           const SizedBox(width: 12),
@@ -218,12 +277,16 @@ class _ReportRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: AppText.dm(size: 13, weight: FontWeight.w600)),
-                Text(subtitle, style: AppText.dm(size: 11, color: AppColors.muted)),
+                Text(title,
+                    style: AppText.dm(size: 13, weight: FontWeight.w600)),
+                Text(subtitle,
+                    style: AppText.dm(size: 11, color: AppColors.muted)),
               ],
             ),
           ),
-          Text(badge, style: AppText.mono(size: 12, color: badgeColor, weight: FontWeight.w700)),
+          Text(badge,
+              style: AppText.mono(
+                  size: 12, color: badgeColor, weight: FontWeight.w700)),
         ],
       ),
     );

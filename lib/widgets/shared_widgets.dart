@@ -48,7 +48,7 @@ class FleetBottomNav extends StatelessWidget {
                           width: 48,
                           height: 32,
                           decoration: BoxDecoration(
-                            color: AppColors.teal.withOpacity(0.15),
+                            color: AppColors.teal.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
@@ -108,9 +108,9 @@ class StatusTag extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.25)),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
       child: Text(
         '$symbol $label',
@@ -150,16 +150,18 @@ class SeverityTag extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.25)),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 12, color: color),
           const SizedBox(width: 4),
-          Text(label, style: AppText.dm(size: 10, color: color, weight: FontWeight.w600)),
+          Text(label,
+              style:
+                  AppText.dm(size: 10, color: color, weight: FontWeight.w600)),
         ],
       ),
     );
@@ -176,11 +178,11 @@ class VehicleCard extends StatelessWidget {
   Color get _iconBg {
     switch (vehicle.status) {
       case VehicleStatus.moving:
-        return AppColors.teal.withOpacity(0.15);
+        return AppColors.teal.withValues(alpha: 0.15);
       case VehicleStatus.parked:
-        return AppColors.muted.withOpacity(0.12);
+        return AppColors.muted.withValues(alpha: 0.12);
       case VehicleStatus.alert:
-        return AppColors.red.withOpacity(0.12);
+        return AppColors.red.withValues(alpha: 0.12);
     }
   }
 
@@ -226,8 +228,7 @@ class VehicleCard extends StatelessWidget {
                   Text(vehicle.name,
                       style: AppText.dm(size: 14, weight: FontWeight.w600)),
                   const SizedBox(height: 2),
-                  Text(vehicle.plate,
-                      style: AppText.mono(size: 11)),
+                  Text(vehicle.plate, style: AppText.mono(size: 11)),
                 ],
               ),
             ),
@@ -294,9 +295,9 @@ class AlertBanner extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: _color.withOpacity(0.10),
+          color: _color.withValues(alpha: 0.10),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: _color.withOpacity(0.25)),
+          border: Border.all(color: _color.withValues(alpha: 0.25)),
         ),
         child: Row(
           children: [
@@ -307,7 +308,8 @@ class AlertBanner extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(alert.title,
-                      style: AppText.dm(size: 12, color: _color, weight: FontWeight.w600)),
+                      style: AppText.dm(
+                          size: 12, color: _color, weight: FontWeight.w600)),
                   const SizedBox(height: 2),
                   Text(alert.message,
                       style: AppText.dm(size: 11, color: AppColors.text2)),
@@ -386,11 +388,14 @@ class StatCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(label,
-              style: AppText.dm(size: 11, color: valueColor ?? AppColors.muted)),
+              style:
+                  AppText.dm(size: 11, color: valueColor ?? AppColors.muted)),
           const SizedBox(height: 6),
           Text(value,
               style: AppText.syne(
-                  size: 30, color: valueColor ?? AppColors.text, weight: FontWeight.w800)),
+                  size: 30,
+                  color: valueColor ?? AppColors.text,
+                  weight: FontWeight.w800)),
           if (sub != null) ...[
             const SizedBox(height: 2),
             Text(sub!, style: AppText.dm(size: 12, color: AppColors.text2)),
@@ -433,7 +438,7 @@ class SettingsRow extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: iconColor.withOpacity(0.12),
+                color: iconColor.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(icon, size: 18, color: iconColor),
@@ -443,7 +448,8 @@ class SettingsRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: AppText.dm(size: 14, weight: FontWeight.w500)),
+                  Text(title,
+                      style: AppText.dm(size: 14, weight: FontWeight.w500)),
                   if (subtitle != null)
                     Text(subtitle!,
                         style: AppText.dm(size: 12, color: AppColors.muted)),
@@ -451,7 +457,7 @@ class SettingsRow extends StatelessWidget {
               ),
             ),
             trailing ??
-                Icon(Icons.chevron_right_rounded,
+                const Icon(Icons.chevron_right_rounded,
                     color: AppColors.muted, size: 20),
           ],
         ),
@@ -482,7 +488,7 @@ class UserAvatar extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [color, color.withOpacity(0.7)],
+          colors: [color, color.withValues(alpha: 0.7)],
         ),
         borderRadius: BorderRadius.circular(size / 3),
       ),
@@ -525,36 +531,39 @@ class MapMock extends StatelessWidget {
               top: height * 0.45,
               left: 0,
               right: 0,
-              child: Container(height: 5, color: AppColors.blue.withOpacity(0.2)),
+              child: Container(
+                  height: 5, color: AppColors.blue.withValues(alpha: 0.2)),
             ),
             Positioned(
               top: height * 0.65,
               left: 0,
               right: 0,
-              child: Container(height: 8, color: AppColors.blue.withOpacity(0.25)),
+              child: Container(
+                  height: 8, color: AppColors.blue.withValues(alpha: 0.25)),
             ),
             // Roads V
             Positioned(
               left: MediaQuery.of(context).size.width * 0.3,
               top: 0,
               bottom: 0,
-              child: Container(width: 5, color: AppColors.blue.withOpacity(0.2)),
+              child: Container(
+                  width: 5, color: AppColors.blue.withValues(alpha: 0.2)),
             ),
             // Vehicle dots
             Positioned(
               top: height * 0.3,
               left: MediaQuery.of(context).size.width * 0.25,
-              child: _VehicleDot(color: AppColors.teal, label: '▶'),
+              child: const _VehicleDot(color: AppColors.teal, label: '▶'),
             ),
             Positioned(
               top: height * 0.55,
               left: MediaQuery.of(context).size.width * 0.55,
-              child: _VehicleDot(color: AppColors.muted, label: '■'),
+              child: const _VehicleDot(color: AppColors.muted, label: '■'),
             ),
             Positioned(
               top: height * 0.2,
               left: MediaQuery.of(context).size.width * 0.6,
-              child: _VehicleDot(color: AppColors.red, label: '⚠'),
+              child: const _VehicleDot(color: AppColors.red, label: '⚠'),
             ),
           ],
         ),
@@ -577,11 +586,17 @@ class _VehicleDot extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         shape: BoxShape.circle,
-        border: Border.all(color: color.withOpacity(0.7), width: 2),
-        boxShadow: [BoxShadow(color: color.withOpacity(0.3), blurRadius: 8, spreadRadius: 2)],
+        border: Border.all(color: color.withValues(alpha: 0.7), width: 2),
+        boxShadow: [
+          BoxShadow(
+              color: color.withValues(alpha: 0.3),
+              blurRadius: 8,
+              spreadRadius: 2)
+        ],
       ),
       alignment: Alignment.center,
-      child: Text(label, style: const TextStyle(fontSize: 7, color: Colors.white)),
+      child:
+          Text(label, style: const TextStyle(fontSize: 7, color: Colors.white)),
     );
   }
 }
@@ -590,7 +605,7 @@ class GridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppColors.blue.withOpacity(0.05)
+      ..color = AppColors.blue.withValues(alpha: 0.05)
       ..strokeWidth = 1;
 
     for (double x = 0; x < size.width; x += 22) {
@@ -609,7 +624,7 @@ class _MapGridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppColors.blue.withOpacity(0.05)
+      ..color = AppColors.blue.withValues(alpha: 0.05)
       ..strokeWidth = 1;
 
     for (double x = 0; x < size.width; x += 22) {
@@ -678,7 +693,8 @@ class SearchInput extends StatelessWidget {
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
 
-  const SearchInput({super.key, required this.hint, this.controller, this.onChanged});
+  const SearchInput(
+      {super.key, required this.hint, this.controller, this.onChanged});
 
   @override
   Widget build(BuildContext context) {

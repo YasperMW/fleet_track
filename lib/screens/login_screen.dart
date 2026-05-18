@@ -71,28 +71,36 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const SizedBox(height: 8),
                 Container(
-                  width: 44, height: 44,
+                  width: 44,
+                  height: 44,
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(colors: [AppColors.teal, AppColors.blue]),
+                    gradient: const LinearGradient(
+                        colors: [AppColors.teal, AppColors.blue]),
                     borderRadius: BorderRadius.circular(14),
                   ),
-                  child: const Icon(Icons.gps_fixed_rounded, size: 22, color: Color(0xFF050C1A)),
+                  child: const Icon(Icons.gps_fixed_rounded,
+                      size: 22, color: Color(0xFF050C1A)),
                 ),
                 const SizedBox(height: 16),
                 Text('Welcome back', style: AppText.syne(size: 20)),
                 const SizedBox(height: 5),
-                Text('Sign in to your fleet account', style: AppText.dm(size: 12, color: AppColors.muted)),
+                Text('Sign in to your fleet account',
+                    style: AppText.dm(size: 12, color: AppColors.muted)),
                 const SizedBox(height: 24),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   decoration: BoxDecoration(
                     color: AppColors.navy3,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: AppColors.teal.withOpacity(0.4)),
+                    border: Border.all(
+                        color: AppColors.teal.withValues(alpha: 0.4)),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.mail_outline_rounded, size: 16, color: AppColors.muted.withOpacity(0.55)),
+                      Icon(Icons.mail_outline_rounded,
+                          size: 16,
+                          color: AppColors.muted.withValues(alpha: 0.55)),
                       const SizedBox(width: 8),
                       Expanded(
                         child: TextField(
@@ -100,7 +108,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           style: AppText.dm(size: 13, color: AppColors.text),
                           decoration: InputDecoration.collapsed(
                             hintText: 'Email address',
-                            hintStyle: AppText.dm(size: 13, color: AppColors.muted),
+                            hintStyle:
+                                AppText.dm(size: 13, color: AppColors.muted),
                           ),
                         ),
                       ),
@@ -109,7 +118,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 10),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   decoration: BoxDecoration(
                     color: AppColors.navy3,
                     borderRadius: BorderRadius.circular(10),
@@ -117,7 +127,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.lock_outline_rounded, size: 16, color: AppColors.muted.withOpacity(0.55)),
+                      Icon(Icons.lock_outline_rounded,
+                          size: 16,
+                          color: AppColors.muted.withValues(alpha: 0.55)),
                       const SizedBox(width: 8),
                       Expanded(
                         child: TextField(
@@ -126,15 +138,20 @@ class _LoginScreenState extends State<LoginScreen> {
                           style: AppText.dm(size: 13, color: AppColors.text),
                           decoration: InputDecoration.collapsed(
                             hintText: 'Password',
-                            hintStyle: AppText.dm(size: 13, color: AppColors.muted),
+                            hintStyle:
+                                AppText.dm(size: 13, color: AppColors.muted),
                           ),
                         ),
                       ),
                       GestureDetector(
-                        onTap: () => setState(() => _obscurePassword = !_obscurePassword),
+                        onTap: () => setState(
+                            () => _obscurePassword = !_obscurePassword),
                         child: Icon(
-                          _obscurePassword ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-                          size: 16, color: AppColors.muted.withOpacity(0.55),
+                          _obscurePassword
+                              ? Icons.visibility_off_rounded
+                              : Icons.visibility_rounded,
+                          size: 16,
+                          color: AppColors.muted.withValues(alpha: 0.55),
                         ),
                       ),
                     ],
@@ -144,13 +161,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   alignment: Alignment.centerRight,
                   child: Padding(
                     padding: const EdgeInsets.only(top: 8, bottom: 16),
-                    child: Text('Forgot password?', style: AppText.dm(size: 12, color: AppColors.teal, weight: FontWeight.w500)),
+                    child: Text('Forgot password?',
+                        style: AppText.dm(
+                            size: 12,
+                            color: AppColors.teal,
+                            weight: FontWeight.w500)),
                   ),
                 ),
                 if (_error != null)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 12),
-                    child: Text(_error!, style: AppText.dm(size: 12, color: AppColors.red)),
+                    child: Text(_error!,
+                        style: AppText.dm(size: 12, color: AppColors.red)),
                   ),
                 GestureDetector(
                   onTap: _isLoading ? null : _login,
@@ -158,22 +180,35 @@ class _LoginScreenState extends State<LoginScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 13),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(colors: [AppColors.teal, AppColors.blue]),
+                      gradient: const LinearGradient(
+                          colors: [AppColors.teal, AppColors.blue]),
                       borderRadius: BorderRadius.circular(12),
-                      boxShadow: [BoxShadow(color: AppColors.teal.withOpacity(0.3), blurRadius: 20, offset: const Offset(0, 4))],
+                      boxShadow: [
+                        BoxShadow(
+                            color: AppColors.teal.withValues(alpha: 0.3),
+                            blurRadius: 20,
+                            offset: const Offset(0, 4))
+                      ],
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         if (_isLoading)
                           const SizedBox(
-                            width: 18, height: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF050C1A)),
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2, color: Color(0xFF050C1A)),
                           )
                         else ...[
-                          Icon(Icons.login_rounded, size: 18, color: const Color(0xFF050C1A)),
+                          const Icon(Icons.login_rounded,
+                              size: 18, color: Color(0xFF050C1A)),
                           const SizedBox(width: 6),
-                          Text('Sign In', style: AppText.dm(size: 14, color: const Color(0xFF050C1A), weight: FontWeight.w700)),
+                          Text('Sign In',
+                              style: AppText.dm(
+                                  size: 14,
+                                  color: const Color(0xFF050C1A),
+                                  weight: FontWeight.w700)),
                         ],
                       ],
                     ),
@@ -184,14 +219,22 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     child: GestureDetector(
                       onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Contact your fleet administrator to create an account'), behavior: SnackBarBehavior.floating),
+                        const SnackBar(
+                            content: Text(
+                                'Contact your fleet administrator to create an account'),
+                            behavior: SnackBarBehavior.floating),
                       ),
                       child: RichText(
                         text: TextSpan(
                           style: AppText.dm(size: 12, color: AppColors.muted),
                           children: [
                             const TextSpan(text: 'No account? '),
-                            TextSpan(text: 'Contact admin', style: AppText.dm(size: 12, color: AppColors.teal, weight: FontWeight.w600)),
+                            TextSpan(
+                                text: 'Contact admin',
+                                style: AppText.dm(
+                                    size: 12,
+                                    color: AppColors.teal,
+                                    weight: FontWeight.w600)),
                           ],
                         ),
                       ),
@@ -200,12 +243,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 Row(
                   children: [
-                    Expanded(child: Container(height: 1, color: AppColors.border)),
+                    Expanded(
+                        child: Container(height: 1, color: AppColors.border)),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Text('OR', style: AppText.dm(size: 11, color: AppColors.muted, weight: FontWeight.w500)),
+                      child: Text('OR',
+                          style: AppText.dm(
+                              size: 11,
+                              color: AppColors.muted,
+                              weight: FontWeight.w500)),
                     ),
-                    Expanded(child: Container(height: 1, color: AppColors.border)),
+                    Expanded(
+                        child: Container(height: 1, color: AppColors.border)),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -219,9 +268,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.security_rounded, size: 18, color: AppColors.blue),
+                      const Icon(Icons.security_rounded,
+                          size: 18, color: AppColors.blue),
                       const SizedBox(width: 8),
-                      Text('Sign in with SSO', style: AppText.dm(size: 13, weight: FontWeight.w500)),
+                      Text('Sign in with SSO',
+                          style: AppText.dm(size: 13, weight: FontWeight.w500)),
                     ],
                   ),
                 ),

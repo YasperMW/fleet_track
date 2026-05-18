@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../models/models.dart';
+
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
@@ -18,20 +19,27 @@ class SettingsScreen extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  width: 40, height: 40,
+                  width: 40,
+                  height: 40,
                   decoration: const BoxDecoration(
-                    gradient: LinearGradient(colors: [AppColors.teal, AppColors.blue]),
+                    gradient: LinearGradient(
+                        colors: [AppColors.teal, AppColors.blue]),
                     shape: BoxShape.circle,
                   ),
                   alignment: Alignment.center,
-                  child: Text('FM', style: AppText.dm(size: 13, color: const Color(0xFF050C1A), weight: FontWeight.w700)),
+                  child: Text('FM',
+                      style: AppText.dm(
+                          size: 13,
+                          color: const Color(0xFF050C1A),
+                          weight: FontWeight.w700)),
                 ),
                 const SizedBox(width: 12),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Fleet Manager', style: AppText.syne(size: 16)),
-                    Text('admin@fleet.co', style: AppText.dm(size: 12, color: AppColors.teal)),
+                    Text('admin@fleet.co',
+                        style: AppText.dm(size: 12, color: AppColors.teal)),
                   ],
                 ),
               ],
@@ -41,28 +49,70 @@ class SettingsScreen extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(14, 0, 14, 40),
               children: [
-                _SettingsGroup(title: 'Notifications', children: [
-                  _ToggleRow(icon: Icons.notifications_active_rounded, iconColor: AppColors.teal, title: 'Push Alerts', subtitle: 'Tamper, speed, geofence events', value: true),
-                  _ToggleRow(icon: Icons.speed_rounded, iconColor: AppColors.teal, title: 'Speed Alerts', subtitle: 'Alert when limit exceeded', value: true),
-                  _ToggleRow(icon: Icons.email_rounded, iconColor: AppColors.muted, title: 'Email Reports', subtitle: 'Weekly summary digest', value: false, isLast: true),
+                const _SettingsGroup(title: 'Notifications', children: [
+                  _ToggleRow(
+                      icon: Icons.notifications_active_rounded,
+                      iconColor: AppColors.teal,
+                      title: 'Push Alerts',
+                      subtitle: 'Tamper, speed, geofence events',
+                      value: true),
+                  _ToggleRow(
+                      icon: Icons.speed_rounded,
+                      iconColor: AppColors.teal,
+                      title: 'Speed Alerts',
+                      subtitle: 'Alert when limit exceeded',
+                      value: true),
+                  _ToggleRow(
+                      icon: Icons.email_rounded,
+                      iconColor: AppColors.muted,
+                      title: 'Email Reports',
+                      subtitle: 'Weekly summary digest',
+                      value: false,
+                      isLast: true),
                 ]),
                 const SizedBox(height: 16),
-                _SettingsGroup(title: 'Tracking', children: [
-                  _ArrowRow(icon: Icons.location_on_rounded, iconColor: AppColors.teal, title: 'Update Interval', subtitle: 'Every 5 seconds'),
-                  _ArrowRow(icon: Icons.fence_rounded, iconColor: AppColors.teal, title: 'Geofence Precision', subtitle: 'High (±10m)', isLast: true),
+                const _SettingsGroup(title: 'Tracking', children: [
+                  _ArrowRow(
+                      icon: Icons.location_on_rounded,
+                      iconColor: AppColors.teal,
+                      title: 'Update Interval',
+                      subtitle: 'Every 5 seconds'),
+                  _ArrowRow(
+                      icon: Icons.fence_rounded,
+                      iconColor: AppColors.teal,
+                      title: 'Geofence Precision',
+                      subtitle: 'High (±10m)',
+                      isLast: true),
                 ]),
                 const SizedBox(height: 16),
                 _SettingsGroup(title: 'Account', children: [
                   _ArrowRow(
-                    icon: Icons.manage_accounts_rounded, iconColor: AppColors.blue, title: 'User Management', subtitle: 'Admins, managers, viewers',
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const UserManagementScreen())),
+                    icon: Icons.manage_accounts_rounded,
+                    iconColor: AppColors.blue,
+                    title: 'User Management',
+                    subtitle: 'Admins, managers, viewers',
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const UserManagementScreen())),
                   ),
-                  _ArrowRow(icon: Icons.security_rounded, iconColor: AppColors.amber, title: 'Security & 2FA'),
-                  _ArrowRow(icon: Icons.policy_rounded, iconColor: AppColors.muted, title: 'Privacy Policy', isLast: true),
+                  const _ArrowRow(
+                      icon: Icons.security_rounded,
+                      iconColor: AppColors.amber,
+                      title: 'Security & 2FA'),
+                  const _ArrowRow(
+                      icon: Icons.policy_rounded,
+                      iconColor: AppColors.muted,
+                      title: 'Privacy Policy',
+                      isLast: true),
                 ]),
                 const SizedBox(height: 16),
-                _SettingsGroup(title: 'About', children: [
-                  _InfoRow(icon: Icons.smartphone_rounded, iconColor: AppColors.muted, title: 'App Version', subtitle: 'FleetTrack v1.0.0'),
+                const _SettingsGroup(title: 'About', children: [
+                  _InfoRow(
+                      icon: Icons.smartphone_rounded,
+                      iconColor: AppColors.muted,
+                      title: 'App Version',
+                      subtitle: 'FleetTrack v1.0.0'),
                   _SignOutRow(isLast: true),
                 ]),
               ],
@@ -85,7 +135,9 @@ class _SettingsGroup extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 2, bottom: 8),
-          child: Text(title.toUpperCase(), style: AppText.dm(size: 11, color: AppColors.muted, weight: FontWeight.w600)),
+          child: Text(title.toUpperCase(),
+              style: AppText.dm(
+                  size: 11, color: AppColors.muted, weight: FontWeight.w600)),
         ),
         Container(
           decoration: BoxDecoration(
@@ -107,7 +159,13 @@ class _ToggleRow extends StatefulWidget {
   final bool value;
   final bool isLast;
 
-  const _ToggleRow({required this.icon, required this.iconColor, required this.title, required this.subtitle, required this.value, this.isLast = false});
+  const _ToggleRow(
+      {required this.icon,
+      required this.iconColor,
+      required this.title,
+      required this.subtitle,
+      required this.value,
+      this.isLast = false});
 
   @override
   State<_ToggleRow> createState() => _ToggleRowState();
@@ -126,7 +184,10 @@ class _ToggleRowState extends State<_ToggleRow> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-      decoration: widget.isLast ? null : BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.border))),
+      decoration: widget.isLast
+          ? null
+          : const BoxDecoration(
+              border: Border(bottom: BorderSide(color: AppColors.border))),
       child: Row(
         children: [
           SizedBox(
@@ -138,27 +199,35 @@ class _ToggleRowState extends State<_ToggleRow> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.title, style: AppText.dm(size: 13, weight: FontWeight.w500)),
-                Text(widget.subtitle, style: AppText.dm(size: 11, color: AppColors.muted)),
+                Text(widget.title,
+                    style: AppText.dm(size: 13, weight: FontWeight.w500)),
+                Text(widget.subtitle,
+                    style: AppText.dm(size: 11, color: AppColors.muted)),
               ],
             ),
           ),
           GestureDetector(
             onTap: () => setState(() => _value = !_value),
             child: Container(
-              width: 36, height: 20,
+              width: 36,
+              height: 20,
               decoration: BoxDecoration(
                 color: _value ? AppColors.teal : AppColors.navy3,
                 borderRadius: BorderRadius.circular(12),
-                border: _value ? null : Border.all(color: Colors.white.withOpacity(0.2)),
+                border: _value
+                    ? null
+                    : Border.all(color: Colors.white.withValues(alpha: 0.2)),
               ),
               child: AnimatedAlign(
                 duration: const Duration(milliseconds: 200),
-                alignment: _value ? Alignment.centerRight : Alignment.centerLeft,
+                alignment:
+                    _value ? Alignment.centerRight : Alignment.centerLeft,
                 child: Container(
-                  width: 14, height: 14,
+                  width: 14,
+                  height: 14,
                   margin: const EdgeInsets.all(3),
-                  decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                  decoration: const BoxDecoration(
+                      color: Colors.white, shape: BoxShape.circle),
                 ),
               ),
             ),
@@ -177,7 +246,13 @@ class _ArrowRow extends StatelessWidget {
   final bool isLast;
   final VoidCallback? onTap;
 
-  const _ArrowRow({required this.icon, required this.iconColor, required this.title, this.subtitle, this.isLast = false, this.onTap});
+  const _ArrowRow(
+      {required this.icon,
+      required this.iconColor,
+      required this.title,
+      this.subtitle,
+      this.isLast = false,
+      this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -185,7 +260,10 @@ class _ArrowRow extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        decoration: isLast ? null : BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.border))),
+        decoration: isLast
+            ? null
+            : const BoxDecoration(
+                border: Border(bottom: BorderSide(color: AppColors.border))),
         child: Row(
           children: [
             SizedBox(
@@ -197,13 +275,15 @@ class _ArrowRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: AppText.dm(size: 13, weight: FontWeight.w500)),
+                  Text(title,
+                      style: AppText.dm(size: 13, weight: FontWeight.w500)),
                   if (subtitle != null)
-                    Text(subtitle!, style: AppText.dm(size: 11, color: AppColors.muted)),
+                    Text(subtitle!,
+                        style: AppText.dm(size: 11, color: AppColors.muted)),
                 ],
               ),
             ),
-            Icon(Icons.chevron_right_rounded, size: 16, color: AppColors.muted),
+            const Icon(Icons.chevron_right_rounded, size: 16, color: AppColors.muted),
           ],
         ),
       ),
@@ -216,7 +296,11 @@ class _InfoRow extends StatelessWidget {
   final Color iconColor;
   final String title, subtitle;
 
-  const _InfoRow({required this.icon, required this.iconColor, required this.title, required this.subtitle});
+  const _InfoRow(
+      {required this.icon,
+      required this.iconColor,
+      required this.title,
+      required this.subtitle});
 
   @override
   Widget build(BuildContext context) {
@@ -233,8 +317,10 @@ class _InfoRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: AppText.dm(size: 13, weight: FontWeight.w500)),
-                Text(subtitle, style: AppText.dm(size: 11, color: AppColors.muted)),
+                Text(title,
+                    style: AppText.dm(size: 13, weight: FontWeight.w500)),
+                Text(subtitle,
+                    style: AppText.dm(size: 11, color: AppColors.muted)),
               ],
             ),
           ),
@@ -258,22 +344,33 @@ class _SignOutRow extends StatelessWidget {
           title: const Text('Sign Out'),
           content: const Text('Are you sure you want to sign out?'),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: Text('Cancel', style: AppText.dm(color: AppColors.muted))),
-            TextButton(onPressed: () => Navigator.pop(ctx), child: Text('Sign Out', style: AppText.dm(color: AppColors.red))),
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child:
+                    Text('Cancel', style: AppText.dm(color: AppColors.muted))),
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child:
+                    Text('Sign Out', style: AppText.dm(color: AppColors.red))),
           ],
         ),
       ),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        decoration: isLast ? null : BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.border))),
+        decoration: isLast
+            ? null
+            : const BoxDecoration(
+                border: Border(bottom: BorderSide(color: AppColors.border))),
         child: Row(
           children: [
-            SizedBox(
+            const SizedBox(
               width: 24,
               child: Icon(Icons.logout_rounded, size: 20, color: AppColors.red),
             ),
             const SizedBox(width: 12),
-            Text('Sign Out', style: AppText.dm(size: 13, color: AppColors.red, weight: FontWeight.w500)),
+            Text('Sign Out',
+                style: AppText.dm(
+                    size: 13, color: AppColors.red, weight: FontWeight.w500)),
           ],
         ),
       ),
@@ -291,7 +388,8 @@ class UserManagementScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final topPad = MediaQuery.of(context).padding.top;
     final admins = SampleData.users.where((u) => u.role == 'Admin').toList();
-    final managers = SampleData.users.where((u) => u.role == 'Manager').toList();
+    final managers =
+        SampleData.users.where((u) => u.role == 'Manager').toList();
     final viewers = SampleData.users.where((u) => u.role == 'Viewer').toList();
 
     return Scaffold(
@@ -307,23 +405,32 @@ class UserManagementScreen extends StatelessWidget {
                   onTap: () => Navigator.pop(context),
                   child: Row(
                     children: [
-                      const Icon(Icons.arrow_back_ios_rounded, color: AppColors.teal, size: 18),
-                      Text('Settings', style: AppText.dm(size: 13, color: AppColors.teal)),
+                      const Icon(Icons.arrow_back_ios_rounded,
+                          color: AppColors.teal, size: 18),
+                      Text('Settings',
+                          style: AppText.dm(size: 13, color: AppColors.teal)),
                     ],
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(child: Text('Users', style: AppText.syne(size: 18))),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(colors: [AppColors.teal, AppColors.blue]),
+                    gradient: const LinearGradient(
+                        colors: [AppColors.teal, AppColors.blue]),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    const Icon(Icons.person_add_rounded, size: 16, color: Color(0xFF050C1A)),
+                    const Icon(Icons.person_add_rounded,
+                        size: 16, color: Color(0xFF050C1A)),
                     const SizedBox(width: 4),
-                    Text('Invite', style: AppText.dm(size: 13, color: const Color(0xFF050C1A), weight: FontWeight.w700)),
+                    Text('Invite',
+                        style: AppText.dm(
+                            size: 13,
+                            color: const Color(0xFF050C1A),
+                            weight: FontWeight.w700)),
                   ]),
                 ),
               ],
@@ -342,30 +449,39 @@ class UserManagementScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: AppColors.teal.withOpacity(0.05),
+                    color: AppColors.teal.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.teal.withOpacity(0.2), style: BorderStyle.solid),
+                    border: Border.all(
+                        color: AppColors.teal.withValues(alpha: 0.2),
+                        style: BorderStyle.solid),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.mail_rounded, size: 20, color: AppColors.teal),
+                      const Icon(Icons.mail_rounded, size: 20, color: AppColors.teal),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Pending Invite', style: AppText.dm(size: 13, weight: FontWeight.w600)),
-                            Text('ops@fleet.co · sent 2h ago', style: AppText.dm(size: 11, color: AppColors.muted)),
+                            Text('Pending Invite',
+                                style: AppText.dm(
+                                    size: 13, weight: FontWeight.w600)),
+                            Text('ops@fleet.co · sent 2h ago',
+                                style: AppText.dm(
+                                    size: 11, color: AppColors.muted)),
                           ],
                         ),
                       ),
                       GestureDetector(
                         onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Invite cancelled'), behavior: SnackBarBehavior.floating),
+                          const SnackBar(
+                              content: Text('Invite cancelled'),
+                              behavior: SnackBarBehavior.floating),
                         ),
                         child: const Padding(
                           padding: EdgeInsets.all(8),
-                          child: Icon(Icons.close_rounded, color: AppColors.red, size: 18),
+                          child: Icon(Icons.close_rounded,
+                              color: AppColors.red, size: 18),
                         ),
                       ),
                     ],
@@ -392,7 +508,9 @@ class _UserGroup extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 2, bottom: 8),
-          child: Text(title.toUpperCase(), style: AppText.dm(size: 11, color: AppColors.muted, weight: FontWeight.w600)),
+          child: Text(title.toUpperCase(),
+              style: AppText.dm(
+                  size: 11, color: AppColors.muted, weight: FontWeight.w600)),
         ),
         Container(
           decoration: BoxDecoration(
@@ -404,26 +522,43 @@ class _UserGroup extends StatelessWidget {
             children: users.map((u) {
               final isLast = users.last == u;
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                decoration: isLast ? null : BoxDecoration(border: Border(bottom: BorderSide(color: AppColors.border))),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                decoration: isLast
+                    ? null
+                    : const BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(color: AppColors.border))),
                 child: Row(
                   children: [
                     Container(
-                      width: 32, height: 32,
+                      width: 32,
+                      height: 32,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(colors: [u.avatarColor, u.avatarColor.withOpacity(0.7)]),
+                        gradient: LinearGradient(colors: [
+                          u.avatarColor,
+                          u.avatarColor.withValues(alpha: 0.7)
+                        ]),
                         shape: BoxShape.circle,
                       ),
                       alignment: Alignment.center,
-                      child: Text(u.initials, style: AppText.dm(size: 11, color: const Color(0xFF050C1A), weight: FontWeight.w700)),
+                      child: Text(u.initials,
+                          style: AppText.dm(
+                              size: 11,
+                              color: const Color(0xFF050C1A),
+                              weight: FontWeight.w700)),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(u.name, style: AppText.dm(size: 13, weight: FontWeight.w500)),
-                          Text(u.email, style: AppText.dm(size: 11, color: AppColors.muted)),
+                          Text(u.name,
+                              style: AppText.dm(
+                                  size: 13, weight: FontWeight.w500)),
+                          Text(u.email,
+                              style:
+                                  AppText.dm(size: 11, color: AppColors.muted)),
                         ],
                       ),
                     ),
@@ -445,9 +580,12 @@ class _RoleTag extends StatelessWidget {
 
   Color get _color {
     switch (role) {
-      case 'Admin': return AppColors.teal;
-      case 'Manager': return AppColors.blue;
-      default: return AppColors.muted;
+      case 'Admin':
+        return AppColors.teal;
+      case 'Manager':
+        return AppColors.blue;
+      default:
+        return AppColors.muted;
     }
   }
 
@@ -456,11 +594,12 @@ class _RoleTag extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
       decoration: BoxDecoration(
-        color: _color.withOpacity(0.12),
+        color: _color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: _color.withOpacity(0.25)),
+        border: Border.all(color: _color.withValues(alpha: 0.25)),
       ),
-      child: Text(role, style: AppText.dm(size: 11, color: _color, weight: FontWeight.w700)),
+      child: Text(role,
+          style: AppText.dm(size: 11, color: _color, weight: FontWeight.w700)),
     );
   }
 }
