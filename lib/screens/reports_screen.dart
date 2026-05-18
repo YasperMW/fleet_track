@@ -122,7 +122,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 3),
                                         child: Container(
-                                          height: 48 *
+                                          height: 42 *
                                               (SampleData.weeklyMileage[i] /
                                                   210),
                                           decoration: BoxDecoration(

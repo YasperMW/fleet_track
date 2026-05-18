@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../models/models.dart';
+import 'login_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -349,7 +350,13 @@ class _SignOutRow extends StatelessWidget {
                 child:
                     Text('Cancel', style: AppText.dm(color: AppColors.muted))),
             TextButton(
-                onPressed: () => Navigator.pop(ctx),
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    (route) => false,
+                  );
+                },
                 child:
                     Text('Sign Out', style: AppText.dm(color: AppColors.red))),
           ],
